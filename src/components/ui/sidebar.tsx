@@ -156,18 +156,23 @@ function Sidebar({
   className,
   children,
   dir,
+  appSidebarTheme = "default",
   ...props
 }: React.ComponentProps<"div"> & {
   side?: "left" | "right"
   variant?: "sidebar" | "floating" | "inset"
   collapsible?: "offcanvas" | "icon" | "none"
+  /** Tema claro del rail; se aplica también al Sheet móvil (portal). */
+  appSidebarTheme?: "default" | "light"
 }) {
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
+  const appSidebarLight = appSidebarTheme === "light"
 
   if (collapsible === "none") {
     return (
       <div
         data-slot="sidebar"
+        data-app-sidebar={appSidebarLight ? "light" : undefined}
         className={cn(
           "flex h-full w-(--sidebar-width) flex-col bg-sidebar text-sidebar-foreground",
           className
@@ -187,6 +192,7 @@ function Sidebar({
           data-sidebar="sidebar"
           data-slot="sidebar"
           data-mobile="true"
+          data-app-sidebar={appSidebarLight ? "light" : undefined}
           className="w-(--sidebar-width) bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
           style={
             {
@@ -242,6 +248,7 @@ function Sidebar({
         <div
           data-sidebar="sidebar"
           data-slot="sidebar-inner"
+          data-app-sidebar={appSidebarLight ? "light" : undefined}
           className="flex size-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:ring-1 group-data-[variant=floating]:ring-sidebar-border"
         >
           {children}

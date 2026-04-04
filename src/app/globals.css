@@ -88,6 +88,18 @@
   --sidebar-ring: #41b8d4;
 }
 
+/* Sidebar claro (dashboard): reutiliza tokens de marca sin cambiar :root global */
+[data-app-sidebar="light"] {
+  --sidebar: var(--muted);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--secondary);
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+}
+
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
