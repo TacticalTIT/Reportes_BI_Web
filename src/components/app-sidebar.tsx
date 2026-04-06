@@ -2,16 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import {
-  CircleHelp,
-  CreditCard,
-  FileBarChart,
-  LayoutDashboard,
-  LifeBuoy,
-  Package,
-  PieChart,
-  Settings,
-} from "lucide-react"
+import { CircleHelp, LifeBuoy, Settings } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -26,25 +17,16 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { NavUser } from "@/components/nav-user"
+import { getMainNavForArea } from "@/lib/nav-by-area"
+import type { ReportArea } from "@/lib/report-area"
 import { cn } from "@/lib/utils"
 
 function isNavActive(pathname: string, href: string) {
-  if (href === "/dashboard") {
-    return pathname === "/dashboard" || pathname === "/dashboard/"
-  }
   return pathname === href || pathname.startsWith(`${href}/`)
 }
 
 const menuButtonClass =
   "rounded-lg text-muted-foreground shadow-none hover:bg-secondary/90 hover:text-foreground data-active:bg-card data-active:text-foreground data-active:shadow-sm data-active:font-semibold"
-
-const mainNavItems = [
-  { title: "Panel", href: "/dashboard", icon: LayoutDashboard },
-  { title: "Estadísticas", href: "/dashboard/ventas", icon: PieChart },
-  { title: "Inventario", href: "/dashboard/inventario", icon: Package },
-  { title: "Tarjetas", href: "/dashboard/tarjetas", icon: CreditCard },
-  { title: "Reportes", href: "/dashboard/reportes", icon: FileBarChart },
-] as const
 
 const managementNavItems = [
   { title: "Ayuda", href: "/dashboard/ayuda", icon: CircleHelp },
@@ -84,10 +66,13 @@ function BrandMark() {
 
 export function AppSidebar({
   user,
+  reportArea,
 }: {
   user: { name?: string | null; email?: string | null }
+  reportArea: ReportArea
 }) {
   const pathname = usePathname()
+  const mainNavItems = getMainNavForArea(reportArea)
 
   return (
     <Sidebar collapsible="icon" appSidebarTheme="light">

@@ -1,6 +1,7 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import type { NextAuthConfig } from "next-auth"
+import { isReportArea } from "@/lib/report-area"
 
 /** bcrypt en .env se rompe con dotenv-expand ($2b se interpreta como variable). Usar AUTH_DEMO_PASSWORD_HASH_B64. */
 function resolveDemoPasswordHash(): string | undefined {
@@ -61,26 +62,39 @@ const config = {
     authorized({ request, auth }) {
       const path = request.nextUrl.pathname
       if (path === "/") {
-        return !!auth?.user
-          ? Response.redirect(new URL("/dashboard", request.nextUrl))
-          : Response.redirect(new URL("/login", request.nextUrl))
+        if (!auth?.user) {
+          return Response.redirect(new URL("/login", request.nextUrl))
+        }
+        if (!auth.user.reportArea) {
+          return Response.redirect(new URL("/login", request.nextUrl))
+        }
+        return Response.redirect(new URL("/dashboard", request.nextUrl))
       }
       if (path === "/login") {
-        if (auth?.user) {
+        if (auth?.user?.reportArea) {
           return Response.redirect(new URL("/dashboard", request.nextUrl))
         }
         return true
       }
       if (path.startsWith("/dashboard")) {
-        return !!auth?.user
+        if (!auth?.user) return false
+        if (!auth.user.reportArea) {
+          return Response.redirect(new URL("/login", request.nextUrl))
+        }
+        return true
       }
       return true
     },
-    jwt({ token, user }) {
+    jwt({ token, user, trigger, session }) {
       if (user) {
         token.sub = user.id
         token.name = user.name
         token.email = user.email
+        if (user.reportArea) token.reportArea = user.reportArea
+      }
+      if (trigger === "update" && session && "reportArea" in session) {
+        const next = session.reportArea
+        if (isReportArea(next)) token.reportArea = next
       }
       return token
     },
@@ -88,6 +102,8 @@ const config = {
       if (session.user) {
         session.user.name = (token.name as string) ?? session.user.name
         session.user.email = (token.email as string) ?? session.user.email
+        const ra = token.reportArea
+        session.user.reportArea = isReportArea(ra) ? ra : undefined
       }
       return session
     },
