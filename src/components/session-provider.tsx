@@ -2,6 +2,7 @@
 
 import type { Session } from "next-auth"
 import { SessionProvider } from "next-auth/react"
+import { AppQueryProvider } from "@/components/app-query-provider"
 
 export function AuthSessionProvider({
   children,
@@ -12,7 +13,7 @@ export function AuthSessionProvider({
 }) {
   return (
     <SessionProvider basePath="/api/auth" session={session}>
-      {children}
+      <AppQueryProvider>{children}</AppQueryProvider>
     </SessionProvider>
   )
 }

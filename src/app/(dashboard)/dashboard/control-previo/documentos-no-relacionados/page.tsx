@@ -1,5 +1,5 @@
-import { ReportPlaceholder } from "../../_components/report-placeholder"
+import { DocumentosScreen } from "@/features/documentos-no-relacionados/components/documentos-screen"
 
 export default function DocumentosNoRelacionadosPage() {
-  return <ReportPlaceholder title="Documento No Relacionados" />
+  return <DocumentosScreen />
 }

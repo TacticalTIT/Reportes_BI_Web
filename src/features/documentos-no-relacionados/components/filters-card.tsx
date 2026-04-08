@@ -1,0 +1,101 @@
+"use client"
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { ROPRESUPUESTO_FILTER_FIELDS } from "@/lib/ropresupuesto-filter-options"
+import type { RopresupuestoTablaFilters } from "@/lib/ropresupuesto-tabla"
+import { Filter } from "lucide-react"
+import { useEffect, useState } from "react"
+
+type Props = {
+  pageSize: number
+  filters: RopresupuestoTablaFilters
+  onApply: (filters: RopresupuestoTablaFilters) => void
+}
+
+export function DocumentosFiltersCard({ pageSize, filters, onApply }: Props) {
+  const [draft, setDraft] = useState<RopresupuestoTablaFilters>(filters)
+  useEffect(() => {
+    setDraft(filters)
+  }, [filters])
+
+  return (
+    <Card className="shadow-sm ring-1 ring-foreground/5">
+      <CardHeader className="border-b border-border/80 pb-4">
+        <CardTitle className="text-base">Filtros de la tabla</CardTitle>
+        <CardDescription>
+          Los indicadores superiores y los resúmenes laterales son globales. La
+          tabla inferior respeta los filtros que elijas aquí.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="pt-4">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            onApply(draft)
+          }}
+          className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6"
+        >
+          <input type="hidden" value={String(pageSize)} />
+          {ROPRESUPUESTO_FILTER_FIELDS.map((field) => {
+            const current = draft[field.param]
+            const inCatalog =
+              current !== undefined &&
+              (field.options as readonly string[]).includes(current)
+            return (
+              <label key={field.param} className="grid gap-1.5">
+                <span className="text-xs font-medium text-muted-foreground">
+                  {field.label}
+                </span>
+                <select
+                  className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                  aria-label={field.label}
+                  value={current ?? ""}
+                  onChange={(event) => {
+                    const value = event.target.value.trim()
+                    setDraft((prev) => {
+                      if (!value) {
+                        const next = { ...prev }
+                        delete next[field.param]
+                        return next
+                      }
+                      return { ...prev, [field.param]: value }
+                    })
+                  }}
+                >
+                  <option value="">Todos</option>
+                  {current !== undefined && !inCatalog ? (
+                    <option value={current}>{current}</option>
+                  ) : null}
+                  {field.options.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )
+          })}
+          <div className="flex items-end sm:col-span-2 lg:col-span-3 xl:col-span-1">
+            <button
+              type="submit"
+              className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-(--color-brand-secondary) px-4 text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              <Filter className="size-4 shrink-0" aria-hidden />
+              Aplicar filtros
+            </button>
+          </div>
+        </form>
+      </CardContent>
+      <CardFooter className="border-t border-border/80 text-xs text-muted-foreground">
+        Al aplicar filtros se reinicia a la página 1.
+      </CardFooter>
+    </Card>
+  )
+}

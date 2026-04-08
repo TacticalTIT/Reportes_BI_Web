@@ -91,5 +91,3 @@ export function defaultDashboardPath(area: ReportArea): string {
   return getMainNavForArea(area)[0].href
 }
 
-export const CONTROL_PREVIO_PREFIX = "/dashboard/control-previo"
-export const RO_CIVIL_PREFIX = "/dashboard/ro-civil"
