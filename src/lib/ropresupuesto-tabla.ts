@@ -6,7 +6,7 @@ import {
 import { fetchReportesJson } from "@/lib/reportes-api-client"
 
 const DEFAULT_PAGE = 1
-const DEFAULT_PAGE_SIZE = 50
+const DEFAULT_PAGE_SIZE = 10
 export const MAX_PAGE_SIZE = 502
 
 export type RopresupuestoTablaFilters = ReportTablaFilters

@@ -97,25 +97,35 @@ export function DocumentosScreen() {
   const biop = biopQuery.data ?? biopFallback
 
   return (
-    <div className="space-y-8 pb-20 md:pb-0">
-      <div className="space-y-2">
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-          Documentos no relacionados
-        </h1>
-        <p className="max-w-3xl text-sm text-muted-foreground">
-          Indicadores y paneles laterales reflejan datos globales del BIOP.
-        </p>
-      </div>
+    <main className="dashboard-surface min-h-screen space-y-10 pb-20 md:pb-0">
+      <div className="mx-auto w-full max-w-[1600px] space-y-10 px-2 md:px-4 xl:px-6">
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div className="space-y-1">
+            <h1 className="text-3xl font-black tracking-tight text-(--color-brand-primary) uppercase">
+              Intelligence Dashboard
+            </h1>
+            <p className="text-sm font-medium text-muted-foreground">
+              Precision Ledger Executive View
+            </p>
+          </div>
+          <button
+            type="button"
+            className="inline-flex items-center gap-2 self-start rounded-xl bg-(--color-brand-primary) px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-opacity hover:opacity-90"
+          >
+            Export Report
+          </button>
+        </div>
 
-      <DocumentosKpiCards biop={biop} loading={biopQuery.isLoading} />
+        <DocumentosKpiCards biop={biop} loading={biopQuery.isLoading} />
 
-      <DocumentosFiltersCard
-        pageSize={pageSize}
-        filters={filters}
-        onApply={handleApplyFilters}
-      />
+        <DocumentosFiltersCard
+          pageSize={pageSize}
+          filters={filters}
+          onApply={handleApplyFilters}
+        />
 
-      <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-4">
+        <DocumentosSidebarInsights biop={biop} loading={biopQuery.isLoading} />
+
         <DocumentosTableCard
           data={data}
           empty={empty}
@@ -126,11 +136,26 @@ export function DocumentosScreen() {
           onPageChange={handlePageChange}
           onPageSizeChange={handlePageSizeChange}
         />
-        <DocumentosSidebarInsights biop={biop} loading={biopQuery.isLoading} />
       </div>
-
+      <footer className="mx-auto mt-auto flex w-full max-w-[1600px] flex-col justify-between gap-6 border-t border-border px-2 py-10 text-[10px] font-bold tracking-widest text-muted-foreground uppercase md:flex-row md:px-4 xl:px-6">
+        <span>© 2023 Precision Ledger Intelligence Systems</span>
+        <div className="flex flex-wrap gap-x-8 gap-y-2">
+          <a className="transition-colors hover:text-(--color-brand-primary)" href="#">
+            Documentation
+          </a>
+          <a className="transition-colors hover:text-(--color-brand-primary)" href="#">
+            API Status
+          </a>
+          <a className="transition-colors hover:text-(--color-brand-primary)" href="#">
+            Support
+          </a>
+          <a className="transition-colors hover:text-(--color-brand-primary)" href="#">
+            Privacy Policy
+          </a>
+        </div>
+      </footer>
       <DocumentosMobileDock />
-    </div>
+    </main>
   )
 }
 

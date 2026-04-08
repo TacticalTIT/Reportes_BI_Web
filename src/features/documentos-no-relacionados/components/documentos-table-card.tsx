@@ -44,9 +44,11 @@ export function DocumentosTableCard({
   const totalRows = pagination.totalItems || data.length
 
   return (
-    <Card className="overflow-hidden shadow-sm ring-1 ring-foreground/5 xl:col-span-3">
-      <CardHeader className="border-b border-border/80 pb-4">
-        <CardTitle className="text-base">Documentos no relacionados</CardTitle>
+    <Card className="w-full overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+      <CardHeader className="border-b border-border/80 bg-white pb-4">
+        <CardTitle className="text-base font-bold tracking-tight text-(--color-brand-primary)">
+          Recent Transactions
+        </CardTitle>
         <CardDescription>
           Detalle paginado desde el API de presupuesto; desplaza horizontalmente
           en pantallas pequeñas.
@@ -59,11 +61,11 @@ export function DocumentosTableCard({
           aria-label="Tabla de documentos"
         >
           <div
-            className="pointer-events-none absolute inset-y-0 right-0 z-[1] w-8 bg-gradient-to-l from-card to-transparent md:hidden"
+            className="pointer-events-none absolute inset-y-0 right-0 z-1 w-8 bg-linear-to-l from-card to-transparent md:hidden"
             aria-hidden
           />
-          <table className="w-full min-w-[58rem] border-collapse text-left text-sm">
-            <thead className="sticky top-0 z-10 bg-primary text-primary-foreground shadow-sm">
+          <table className="w-full min-w-232 border-collapse text-left text-sm">
+            <thead className="sticky top-0 z-10 bg-muted/50 text-(--color-brand-primary)">
               <tr>
                 <th className="px-4 py-3.5 text-[10px] font-bold uppercase tracking-wider lg:px-5">
                   Tipo doc.
@@ -94,7 +96,7 @@ export function DocumentosTableCard({
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border/60">
+            <tbody className="divide-y divide-border/60 bg-white">
               {loading ? (
                 Array.from({ length: 7 }).map((_, i) => (
                   <tr key={`skeleton-row-${i}`}>
@@ -116,14 +118,11 @@ export function DocumentosTableCard({
                 data.map((row, i) => {
                   const related = relationshipStatus(row.RelacionadoCon)
                   return (
-                    <tr
-                      key={`${row.NroDocumentoPago}-${row.Fecha}-${i}`}
-                      className="bg-card transition-colors even:bg-muted/25 hover:bg-muted/40"
-                    >
+                    <tr key={`${row.NroDocumentoPago}-${row.Fecha}-${i}`} className="transition-colors hover:bg-muted/30">
                       <td className="px-4 py-3.5 align-middle text-muted-foreground lg:px-5">
                         {row.TipoDocumento}
                       </td>
-                      <td className="px-4 py-3.5 align-middle font-semibold text-primary lg:px-5">
+                      <td className="px-4 py-3.5 align-middle font-semibold text-(--color-brand-primary) lg:px-5">
                         {row.NroDocumentoPago}
                       </td>
                       <td className="px-4 py-3.5 align-middle lg:px-5">
@@ -144,7 +143,7 @@ export function DocumentosTableCard({
                           </span>
                         </span>
                       </td>
-                      <td className="px-4 py-3.5 text-right align-middle tabular-nums lg:px-5">
+                      <td className="px-4 py-3.5 text-right align-middle font-black text-(--color-brand-primary) tabular-nums lg:px-5">
                         {formatNumero(row.SumMontoS, 2)}
                       </td>
                       <td className="px-4 py-3.5 text-right align-middle text-sm font-semibold tabular-nums lg:px-5">
@@ -168,7 +167,7 @@ export function DocumentosTableCard({
                           {row.EstadoDocumento}
                         </span>
                       </td>
-                      <td className="max-w-[14rem] truncate px-4 py-3.5 align-middle text-muted-foreground lg:max-w-xs lg:px-5">
+                      <td className="max-w-56 truncate px-4 py-3.5 align-middle text-muted-foreground lg:max-w-xs lg:px-5">
                         {row.DesSocioNegocio}
                       </td>
                     </tr>
@@ -179,7 +178,7 @@ export function DocumentosTableCard({
           </table>
         </div>
       </CardContent>
-      <CardFooter className="flex flex-col gap-4 border-t border-border bg-muted/30 sm:flex-row sm:items-center sm:justify-between">
+      <CardFooter className="flex flex-col gap-4 border-t border-border bg-muted/20 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs font-medium text-muted-foreground">
           {empty
             ? "Sin resultados en esta página"

@@ -145,3 +145,23 @@
     @apply font-sans;
   }
 }
+
+@layer utilities {
+  .dashboard-surface {
+    background-color: #f8f9fa;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbc4d3;
+  border-radius: 999px;
+}

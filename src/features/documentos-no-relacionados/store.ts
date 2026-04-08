@@ -19,7 +19,7 @@ type DocumentosStore = {
 
 export const useDocumentosStore = create<DocumentosStore>((set) => ({
   page: 1,
-  pageSize: 50,
+  pageSize: 10,
   filters: {},
   hydrate: ({ page, pageSize, filters }) =>
     set({

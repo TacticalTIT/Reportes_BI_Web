@@ -1,1 +1,1 @@
-export const DOCUMENTOS_PAGE_SIZE_OPTIONS = [25, 50, 100] as const
+export const DOCUMENTOS_PAGE_SIZE_OPTIONS = [10] as const

@@ -14,26 +14,26 @@ export function DocumentosKpiCards({ biop, loading = false }: Props) {
       : "—"
 
   return (
-    <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
-      <div className="relative overflow-hidden rounded-xl bg-primary p-6 text-primary-foreground shadow-md ring-1 ring-primary/20">
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary-foreground/70">
+    <section className="grid grid-cols-1 gap-8 md:grid-cols-2">
+      <div className="flex flex-col justify-between rounded-2xl border-l-[6px] border-(--color-brand-primary) bg-card p-8 shadow-sm">
+        <p className="text-xs font-bold tracking-[0.18em] text-muted-foreground uppercase">
           Pendiente por liquidar
         </p>
-        <div className="mt-3 text-4xl font-extrabold tracking-tight tabular-nums">
-          {loading ? <Skeleton className="h-10 w-28 bg-white/20" /> : kpiPendienteLiquidar}
+        <div className="mt-4 text-5xl font-extrabold tracking-tight text-(--color-brand-primary) tabular-nums">
+          {loading ? <Skeleton className="h-12 w-44" /> : kpiPendienteLiquidar}
         </div>
-        <p className="mt-2 text-sm text-primary-foreground/75">
+        <p className="mt-2 text-sm text-muted-foreground">
           {biop.cantPendienteLiquidar.kind === "error"
             ? biop.cantPendienteLiquidar.message
             : "Documentos esperando liquidación"}
         </p>
       </div>
-      <div className="rounded-xl border border-border bg-card p-6 shadow-sm ring-1 ring-foreground/5">
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground">
+      <div className="flex flex-col justify-between rounded-2xl border-l-[6px] border-(--color-brand-tertiary) bg-card p-8 shadow-sm">
+        <p className="text-xs font-bold tracking-[0.18em] text-muted-foreground uppercase">
           Pendiente por relacionar
         </p>
-        <div className="mt-3 text-4xl font-extrabold tracking-tight text-primary tabular-nums">
-          {loading ? <Skeleton className="h-10 w-28" /> : kpiPendienteRelacionar}
+        <div className="mt-4 text-5xl font-extrabold tracking-tight text-(--color-brand-primary) tabular-nums">
+          {loading ? <Skeleton className="h-12 w-44" /> : kpiPendienteRelacionar}
         </div>
         <p className="mt-2 text-sm text-muted-foreground">
           {biop.cantPendienteRelacionar.kind === "error"
