@@ -24,7 +24,8 @@ export function NavUser({
     <div
       className={cn(
         "flex items-center gap-2 rounded-lg p-2 text-sidebar-foreground",
-        "outline-none ring-sidebar-ring focus-within:ring-2"
+        "outline-none ring-sidebar-ring focus-within:ring-2",
+        "group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:gap-2 group-data-[collapsible=icon]:py-3"
       )}
     >
       <Avatar className="size-9 shrink-0 rounded-full border border-sidebar-border">
@@ -36,7 +37,7 @@ export function NavUser({
         <p className="truncate text-sm font-semibold">{name ?? "Usuario"}</p>
         <p className="truncate text-xs text-muted-foreground">{email ?? ""}</p>
       </div>
-      <form action={signOutAction} className="shrink-0">
+      <form action={signOutAction} className="shrink-0 group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center">
         <Button
           type="submit"
           variant="ghost"

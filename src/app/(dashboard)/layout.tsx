@@ -26,8 +26,8 @@ export default async function DashboardLayout({
         <AppSidebar user={session.user} reportArea={reportArea} />
         <SidebarInset>
           <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border bg-background px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-6" />
+            <SidebarTrigger className="-ml-1 md:hidden" />
+            <Separator orientation="vertical" className="mr-2 h-6 md:hidden" />
             <span
               className="inline-flex max-w-[min(100%,20rem)] items-center rounded-full border border-primary/20 bg-primary/8 px-3 py-1 text-center text-[0.7rem] font-semibold uppercase leading-tight tracking-wide text-primary"
               title="Área de trabajo activa"

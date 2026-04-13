@@ -12,27 +12,14 @@ import {
   totalCantidadFromRows,
 } from "../biop-aggregates"
 
-type Props = { biop: BiopDashboardData; loading?: boolean }
+type Props = {
+  biop?: BiopDashboardData
+  /** Primera carga o refetch sin datos anteriores. */
+  isPending?: boolean
+}
 
-export function DocumentosSidebarInsights({ biop, loading = false }: Props) {
-  const relacionarRows = biopTipoRowsWithoutGrandTotal(biop.cantPorTipoRelacionar)
-  const liquidarRows = biopLiquidarRowsWithoutGrandTotal(biop.cantPorTipoLiquidar)
-  const fallbackRelacionar =
-    biop.cantPendienteRelacionar.kind === "ok"
-      ? [{ TipoDocumento: "Total", cantidad: biop.cantPendienteRelacionar.value }]
-      : []
-  const fallbackLiquidar =
-    biop.cantPendienteLiquidar.kind === "ok"
-      ? [{ TipoDocumento: "Total", cantidad: biop.cantPendienteLiquidar.value }]
-      : []
-  const activosRelacionar = (relacionarRows.length ? relacionarRows : fallbackRelacionar).slice(
-    0,
-    3
-  )
-  const activosLiquidar = (liquidarRows.length ? liquidarRows : fallbackLiquidar).slice(0, 3)
-  const totalRelacionar = totalCantidadFromRows(activosRelacionar)
-
-  if (loading) {
+export function DocumentosSidebarInsights({ biop, isPending = false }: Props) {
+  if (isPending && !biop) {
     return (
       <section className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <Card className="rounded-2xl shadow-sm ring-1 ring-foreground/5">
@@ -62,6 +49,25 @@ export function DocumentosSidebarInsights({ biop, loading = false }: Props) {
       </section>
     )
   }
+
+  if (!biop) return null
+
+  const relacionarRows = biopTipoRowsWithoutGrandTotal(biop.cantPorTipoRelacionar)
+  const liquidarRows = biopLiquidarRowsWithoutGrandTotal(biop.cantPorTipoLiquidar)
+  const fallbackRelacionar =
+    biop.cantPendienteRelacionar.kind === "ok"
+      ? [{ TipoDocumento: "Total", cantidad: biop.cantPendienteRelacionar.value }]
+      : []
+  const fallbackLiquidar =
+    biop.cantPendienteLiquidar.kind === "ok"
+      ? [{ TipoDocumento: "Total", cantidad: biop.cantPendienteLiquidar.value }]
+      : []
+  const activosRelacionar = (relacionarRows.length ? relacionarRows : fallbackRelacionar).slice(
+    0,
+    3
+  )
+  const activosLiquidar = (liquidarRows.length ? liquidarRows : fallbackLiquidar).slice(0, 3)
+  const totalRelacionar = totalCantidadFromRows(activosRelacionar)
 
   return (
     <section className="grid grid-cols-1 gap-6 md:grid-cols-2">

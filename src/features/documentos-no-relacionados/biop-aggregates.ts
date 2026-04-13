@@ -17,6 +17,6 @@ export function biopLiquidarRowsWithoutGrandTotal(
   return result.value.filter((r) => !r.IsGrandTotalRowTotal)
 }
 
-export function totalCantidadFromRows(rows: BiopCountByTipoRow[]) {
+export function totalCantidadFromRows(rows: { cantidad: number }[]) {
   return rows.reduce((acc, row) => acc + row.cantidad, 0)
 }

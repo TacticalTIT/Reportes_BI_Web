@@ -3,7 +3,10 @@ import {
   type ReportTablaFilters,
   REPORT_FILTER_PARAM_KEYS,
 } from "@/lib/report-filters"
-import { fetchReportesJson } from "@/lib/reportes-api-client"
+import {
+  fetchReportesJson,
+  REPORTES_PROXY_ROPRESUPUESTO_TABLA_PATH,
+} from "@/lib/reportes-api-client"
 
 const DEFAULT_PAGE = 1
 const DEFAULT_PAGE_SIZE = 10
@@ -25,6 +28,12 @@ export type RopresupuestoRow = {
   SumMontoPorLiquidar: number
 }
 
+export type RopresupuestoPaginationLinks = {
+  self: string
+  prev: string | null
+  next: string | null
+}
+
 export type RopresupuestoPagination = {
   page: number
   pageSize: number
@@ -36,6 +45,8 @@ export type RopresupuestoPagination = {
   prevPage: number | null
   nextPage: number | null
   visiblePages: number[]
+  /** Presente en respuestas del backend según spec. */
+  links?: RopresupuestoPaginationLinks
 }
 
 type ApiSuccessBody = {
@@ -130,7 +141,7 @@ export async function fetchRopresupuestoTabla(input: {
   const pageSize = normalizePageSize(input.pageSize ?? DEFAULT_PAGE_SIZE)
   const filters = input.filters ?? {}
 
-  const path = `/api/ropresupuesto-tabla?${buildRopresupuestoTablaSearchParams(
+  const path = `${REPORTES_PROXY_ROPRESUPUESTO_TABLA_PATH}?${buildRopresupuestoTablaSearchParams(
     page,
     pageSize,
     filters

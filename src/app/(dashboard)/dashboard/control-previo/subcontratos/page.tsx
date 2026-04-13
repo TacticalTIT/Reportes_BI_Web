@@ -1,5 +1,5 @@
-import { ReportPlaceholder } from "../../_components/report-placeholder"
+import { SubcontratosScreen } from "@/features/subcontratos/components/subcontratos-screen"
 
 export default function SubcontratosPage() {
-  return <ReportPlaceholder title="SubContratos" />
+  return <SubcontratosScreen />
 }

@@ -14,7 +14,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
+  SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { NavUser } from "@/components/nav-user"
 import { getMainNavForArea } from "@/lib/nav-by-area"
@@ -26,7 +26,7 @@ function isNavActive(pathname: string, href: string) {
 }
 
 const menuButtonClass =
-  "rounded-lg text-muted-foreground shadow-none hover:bg-secondary/90 hover:text-foreground data-active:bg-card data-active:text-foreground data-active:shadow-sm data-active:font-semibold"
+  "rounded-lg text-muted-foreground shadow-none hover:bg-secondary/90 hover:text-foreground data-active:bg-sidebar-accent data-active:text-sidebar-accent-foreground data-active:font-semibold data-active:ring-1 data-active:ring-sidebar-border/60 group-data-[collapsible=icon]:data-active:ring-2 group-data-[collapsible=icon]:data-active:ring-sidebar-ring/40"
 
 const managementNavItems = [
   { title: "Ayuda", href: "/dashboard/ayuda", icon: CircleHelp },
@@ -76,15 +76,21 @@ export function AppSidebar({
 
   return (
     <Sidebar collapsible="icon" appSidebarTheme="light">
-      <SidebarHeader className="border-b border-sidebar-border px-3 py-4">
-        <div className="flex items-center gap-3 px-1">
-          <BrandMark />
-          <div className="min-w-0 group-data-[collapsible=icon]:hidden">
+      <SidebarHeader className="border-b border-sidebar-border px-3 py-4 group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:py-3">
+        <div className="flex items-center gap-3 px-1 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:gap-2 group-data-[collapsible=icon]:px-0">
+          <div className="shrink-0 transition-transform group-data-[collapsible=icon]:scale-90">
+            <BrandMark />
+          </div>
+          <div className="min-w-0 flex-1 group-data-[collapsible=icon]:hidden">
             <p className="text-base font-semibold tracking-tight text-sidebar-foreground">
               Reportes BI
             </p>
             <p className="text-xs text-muted-foreground">Panel corporativo</p>
           </div>
+          <SidebarTrigger
+            className="ml-auto hidden shrink-0 text-muted-foreground hover:bg-secondary/90 hover:text-foreground md:inline-flex group-data-[collapsible=icon]:ml-0"
+            aria-label="Contraer o expandir menú"
+          />
         </div>
       </SidebarHeader>
       <SidebarContent className="gap-6 px-2 py-4">
@@ -93,7 +99,7 @@ export function AppSidebar({
             Menú principal
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="gap-1">
+            <SidebarMenu className="gap-1 group-data-[collapsible=icon]:items-center">
               {mainNavItems.map((item) => (
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton
@@ -117,7 +123,7 @@ export function AppSidebar({
             Gestión
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="gap-1">
+            <SidebarMenu className="gap-1 group-data-[collapsible=icon]:items-center">
               {managementNavItems.map((item) => (
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton
@@ -140,7 +146,6 @@ export function AppSidebar({
       <SidebarFooter className="border-t border-sidebar-border p-2">
         <NavUser name={user.name} email={user.email} />
       </SidebarFooter>
-      <SidebarRail />
     </Sidebar>
   )
 }

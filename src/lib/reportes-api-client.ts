@@ -7,16 +7,47 @@ type ApiErrorBody = {
   code?: string
 }
 
-function getReportesApiBaseUrl() {
-  const raw =
-    process.env.NEXT_PUBLIC_REPORTES_API_BASE_URL ??
-    process.env.REPORTES_API_BASE_URL
-  return raw?.replace(/\/$/, "")
+/** Máximo `pageSize` para métricas BIOP tabulares (spec backend). */
+export const BIOP_TABLE_MAX_PAGE_SIZE = 200
+
+/** Rutas proxy en Next (mismo origen); el backend real va en REPORTES_API_BASE_URL (servidor). */
+export const REPORTES_PROXY_BIOP_ANALYTICS_PATH = "/api/reportes/biop/analytics"
+export const REPORTES_PROXY_ROPRESUPUESTO_TABLA_PATH =
+  "/api/reportes/ropresupuesto-tabla"
+
+/** Control previo — subcontratos (proxy → `api/controlprevio/subcontratos/*` en el backend). */
+export const REPORTES_PROXY_CONTROL_PREVIO_SUBCONTRATOS_TABLA_PATH =
+  "/api/reportes/controlprevio/subcontratos/tabla"
+export const REPORTES_PROXY_CONTROL_PREVIO_SUBCONTRATOS_KPIS_PATH =
+  "/api/reportes/controlprevio/subcontratos/kpis"
+export const REPORTES_PROXY_CONTROL_PREVIO_SUBCONTRATOS_TOP10_PATH =
+  "/api/reportes/controlprevio/subcontratos/top10"
+
+/** @deprecated Alias del proxy de tabla; evita errores de build si quedó un import antiguo en caché. */
+export const REPORTES_PROXY_ROPRESUPUESTO_BIOP_SUBCONTRATO_RESUMEN_PATH =
+  REPORTES_PROXY_CONTROL_PREVIO_SUBCONTRATOS_TABLA_PATH
+
+export type BiopAnalyticsPathOptions = {
+  /** Paginación solo aplica a métricas tabulares en `/api/biop/analytics`. */
+  page?: number
+  pageSize?: number
+}
+
+function normalizeBiopPage(page: number | undefined): number | undefined {
+  if (page == null || !Number.isFinite(page) || page < 1) return undefined
+  return Math.floor(page)
+}
+
+function normalizeBiopPageSize(pageSize: number | undefined): number | undefined {
+  if (pageSize == null || !Number.isFinite(pageSize) || pageSize < 1)
+    return undefined
+  return Math.min(Math.floor(pageSize), BIOP_TABLE_MAX_PAGE_SIZE)
 }
 
 export function buildBiopAnalyticsPath(
   metric: string,
-  filters?: ReportTablaFilters
+  filters?: ReportTablaFilters,
+  opts?: BiopAnalyticsPathOptions
 ) {
   const query = new URLSearchParams({ metric })
   const filtersQs = filters ? buildReportFiltersQueryString(filters) : ""
@@ -25,18 +56,29 @@ export function buildBiopAnalyticsPath(
       query.set(k, v)
     }
   }
-  return `/api/biop/analytics?${query.toString()}`
+  const p = normalizeBiopPage(opts?.page)
+  const ps = normalizeBiopPageSize(opts?.pageSize)
+  if (p !== undefined) query.set("page", String(p))
+  if (ps !== undefined) query.set("pageSize", String(ps))
+  return `${REPORTES_PROXY_BIOP_ANALYTICS_PATH}?${query.toString()}`
+}
+
+/**
+ * URL absoluta para `fetch` en SSR; en el navegador basta la ruta relativa al proxy.
+ */
+export function resolveReportesRequestUrl(path: string): string {
+  if (path.startsWith("http://") || path.startsWith("https://")) return path
+  if (typeof window !== "undefined") return path
+  const base =
+    process.env.AUTH_URL?.replace(/\/$/, "") ||
+    process.env.NEXTAUTH_URL?.replace(/\/$/, "") ||
+    "http://localhost:3000"
+  return `${base}${path}`
 }
 
 export async function fetchReportesJson(path: string): Promise<unknown> {
-  const base = getReportesApiBaseUrl()
-  if (!base) {
-    throw new Error(
-      "Falta NEXT_PUBLIC_REPORTES_API_BASE_URL (o REPORTES_API_BASE_URL) en .env.local."
-    )
-  }
-
-  const res = await fetch(`${base}${path}`, { cache: "no-store" })
+  const url = resolveReportesRequestUrl(path)
+  const res = await fetch(url, { cache: "no-store" })
   let body: unknown
   try {
     body = await res.json()
