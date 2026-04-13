@@ -1,80 +1,38 @@
 "use client"
 
-import { useEffect, useMemo, useRef } from "react"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { ReportErrorState } from "@/components/report-states"
-import {
-  buildRopresupuestoTablaSearchParams,
-} from "@/lib/ropresupuesto-tabla"
-import { parseRopresupuestoTablaFromSearchParams } from "@/lib/url-sync-table-filters"
-import { DocumentosFiltersCard } from "./filters-card"
 import { DocumentosKpiCards } from "./kpi-cards"
 import { DocumentosMobileDock } from "./mobile-dock"
 import { DocumentosSidebarInsights } from "./sidebar-insights"
 import { DocumentosTableCard } from "./documentos-table-card"
-import { useBiopDashboardQuery, useRopresupuestoTablaQuery } from "../queries"
+import {
+  useDocNoRelKpisQuery,
+  useDocNoRelResumenQuery,
+  useDocNoRelTablaQuery,
+} from "../queries"
 import { useDocumentosStore } from "../store"
 
 export function DocumentosScreen() {
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const { page, pageSize, filters, hydrate, setFilters, setPage, setPageSize } =
-    useDocumentosStore()
-  const lastSyncedQuery = useRef<string | null>(null)
-
-  const parsed = useMemo(
-    () => parseRopresupuestoTablaFromSearchParams(searchParams),
-    [searchParams]
-  )
-
-  const searchParamsString = searchParams.toString()
-  useEffect(() => {
-    if (lastSyncedQuery.current === searchParamsString) return
-    lastSyncedQuery.current = searchParamsString
-    hydrate(parsed)
-  }, [hydrate, parsed, searchParamsString])
-
-  const tablaQuery = useRopresupuestoTablaQuery({
-    page,
-    pageSize,
-    filters,
-  })
-  const biopQuery = useBiopDashboardQuery(filters)
-
-  const syncUrl = (next: { page: number; pageSize: number; filters: typeof filters }) => {
-    const query = buildRopresupuestoTablaSearchParams(
-      next.page,
-      next.pageSize,
-      next.filters
-    )
-    router.replace(`${pathname}?${query.toString()}`)
-  }
-
-  const handleApplyFilters = (nextFilters: typeof filters) => {
-    const next = { page: 1, pageSize, filters: nextFilters }
-    setFilters(nextFilters)
-    syncUrl(next)
-  }
+  const { page, pageSize, setPage, setPageSize } = useDocumentosStore()
+  const tablaQuery = useDocNoRelTablaQuery({ page, pageSize })
+  const kpiQuery = useDocNoRelKpisQuery()
+  const resumenQuery = useDocNoRelResumenQuery()
 
   const handlePageChange = (nextPage: number) => {
     setPage(nextPage)
-    syncUrl({ page: nextPage, pageSize, filters })
   }
 
   const handlePageSizeChange = (nextPageSize: number) => {
     setPageSize(nextPageSize)
-    syncUrl({ page: 1, pageSize: nextPageSize, filters })
   }
 
   const tablaData = tablaQuery.data
-  const data = tablaData?.data ?? []
+  const data = tablaData?.items ?? []
   const pagination =
     tablaData?.pagination ?? {
       page,
       pageSize,
-      itemsOnPage: 0,
-      totalItems: 0,
+      totalRows: 0,
       totalPages: 1,
       hasPrev: false,
       hasNext: false,
@@ -82,7 +40,7 @@ export function DocumentosScreen() {
       nextPage: null,
       visiblePages: [1],
     }
-  const message = tablaData?.message
+  const currency = tablaData?.currency
   const empty = !tablaQuery.isLoading && data.length === 0
 
   const tablaErrorMessage =
@@ -90,10 +48,15 @@ export function DocumentosScreen() {
       ? tablaQuery.error.message
       : "No se pudo cargar la tabla."
 
-  const biopErrorMessage =
-    biopQuery.error instanceof Error
-      ? biopQuery.error.message
-      : "No se pudo cargar el tablero BIOP."
+  const kpisErrorMessage =
+    kpiQuery.error instanceof Error
+      ? kpiQuery.error.message
+      : "No se pudieron cargar los KPIs."
+
+  const resumenErrorMessage =
+    resumenQuery.error instanceof Error
+      ? resumenQuery.error.message
+      : "No se pudieron cargar los resúmenes por tipo."
 
   return (
     <main className="dashboard-surface min-h-screen space-y-10 pb-20 md:pb-0">
@@ -104,40 +67,37 @@ export function DocumentosScreen() {
               Documentos no relacionados
             </h1>
             <p className="text-sm font-medium text-muted-foreground">
-              Precision Ledger Executive View
+              Control previo financiero con KPIs y trazabilidad por tipo documental.
             </p>
           </div>
           <button
             type="button"
             className="inline-flex items-center gap-2 self-start rounded-xl bg-(--color-brand-primary) px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-opacity hover:opacity-90"
           >
-            Export Report
+            Exportar reporte
           </button>
         </div>
 
-        {biopQuery.isError ? (
+        {kpiQuery.isError ? (
           <ReportErrorState
-            message={biopErrorMessage}
-            onRetry={() => void biopQuery.refetch()}
+            message={kpisErrorMessage}
+            onRetry={() => void kpiQuery.refetch()}
           />
         ) : (
-          <>
-            <DocumentosKpiCards
-              biop={biopQuery.data}
-              isPending={biopQuery.isPending}
-            />
-            <DocumentosSidebarInsights
-              biop={biopQuery.data}
-              isPending={biopQuery.isPending}
-            />
-          </>
+          <DocumentosKpiCards kpis={kpiQuery.data} isPending={kpiQuery.isPending} />
         )}
 
-        <DocumentosFiltersCard
-          pageSize={pageSize}
-          filters={filters}
-          onApply={handleApplyFilters}
-        />
+        {resumenQuery.isError ? (
+          <ReportErrorState
+            message={resumenErrorMessage}
+            onRetry={() => void resumenQuery.refetch()}
+          />
+        ) : (
+          <DocumentosSidebarInsights
+            resumen={resumenQuery.data}
+            isPending={resumenQuery.isPending}
+          />
+        )}
 
         {tablaQuery.isError ? (
           <ReportErrorState
@@ -149,7 +109,7 @@ export function DocumentosScreen() {
             data={data}
             empty={empty}
             loading={tablaQuery.isLoading}
-            message={message}
+            currency={currency}
             pagination={pagination}
             pageSize={pageSize}
             onPageChange={handlePageChange}

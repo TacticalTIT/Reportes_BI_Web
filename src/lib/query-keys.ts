@@ -18,4 +18,13 @@ export const reportKeys = {
     page: number,
     pageSize: number
   ) => [...reportKeys.all, "subcontratos-dashboard", filters, page, pageSize] as const,
+
+  documentosNoRelacionadosKpis: () =>
+    [...reportKeys.all, "documentos-no-relacionados-kpis"] as const,
+
+  documentosNoRelacionadosTabla: (page: number, pageSize: number) =>
+    [...reportKeys.all, "documentos-no-relacionados-tabla", page, pageSize] as const,
+
+  documentosNoRelacionadosResumen: () =>
+    [...reportKeys.all, "documentos-no-relacionados-resumen"] as const,
 }

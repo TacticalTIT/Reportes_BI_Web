@@ -5,21 +5,79 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import type { BiopDashboardData } from "@/lib/biop-dashboard"
-import {
-  biopLiquidarRowsWithoutGrandTotal,
-  biopTipoRowsWithoutGrandTotal,
-  totalCantidadFromRows,
-} from "../biop-aggregates"
+import type { ControlPrevioDocNoRelResumenResult } from "@/lib/controlprevio-documentos-no-relacionados"
 
 type Props = {
-  biop?: BiopDashboardData
+  resumen?: ControlPrevioDocNoRelResumenResult
   /** Primera carga o refetch sin datos anteriores. */
   isPending?: boolean
 }
 
-export function DocumentosSidebarInsights({ biop, isPending = false }: Props) {
-  if (isPending && !biop) {
+function RowTable(props: {
+  title: string
+  rows: { tipoDocumento: string | null; cantidad: number; isGrandTotalRowTotal: boolean }[]
+  accentClass: string
+}) {
+  const { title, rows, accentClass } = props
+  if (rows.length === 0) {
+    return (
+      <Card className={`rounded-2xl border border-border border-t-4 ${accentClass} shadow-sm`}>
+        <CardHeader className="border-b border-border/80 pb-3">
+          <CardTitle className="text-sm font-black tracking-[0.18em] text-muted-foreground uppercase">
+            {title}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pt-4">
+          <p className="text-sm text-muted-foreground">Sin data disponible.</p>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return (
+    <Card className={`rounded-2xl border border-border border-t-4 ${accentClass} shadow-sm`}>
+      <CardHeader className="border-b border-border/80 pb-3">
+        <CardTitle className="text-sm font-black tracking-[0.18em] text-muted-foreground uppercase">
+          {title}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="px-0 pt-0">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-96 border-collapse text-sm">
+            <thead className="bg-muted/35">
+              <tr>
+                <th className="px-5 py-3 text-left text-[10px] font-bold tracking-wider text-muted-foreground uppercase">
+                  Tipo documento
+                </th>
+                <th className="px-5 py-3 text-right text-[10px] font-bold tracking-wider text-muted-foreground uppercase">
+                  Cantidad
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/60">
+              {rows.map((row) => (
+                <tr
+                  key={`${row.tipoDocumento ?? "total"}-${row.cantidad}`}
+                  className={row.isGrandTotalRowTotal ? "bg-muted/30 font-bold" : "hover:bg-muted/20"}
+                >
+                  <td className="px-5 py-3 text-muted-foreground">
+                    {row.tipoDocumento ?? "Total"}
+                  </td>
+                  <td className="px-5 py-3 text-right font-semibold tabular-nums">
+                    {row.cantidad.toLocaleString("es-MX")}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+export function DocumentosSidebarInsights({ resumen, isPending = false }: Props) {
+  if (isPending && !resumen) {
     return (
       <section className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <Card className="rounded-2xl shadow-sm ring-1 ring-foreground/5">
@@ -50,101 +108,20 @@ export function DocumentosSidebarInsights({ biop, isPending = false }: Props) {
     )
   }
 
-  if (!biop) return null
-
-  const relacionarRows = biopTipoRowsWithoutGrandTotal(biop.cantPorTipoRelacionar)
-  const liquidarRows = biopLiquidarRowsWithoutGrandTotal(biop.cantPorTipoLiquidar)
-  const fallbackRelacionar =
-    biop.cantPendienteRelacionar.kind === "ok"
-      ? [{ TipoDocumento: "Total", cantidad: biop.cantPendienteRelacionar.value }]
-      : []
-  const fallbackLiquidar =
-    biop.cantPendienteLiquidar.kind === "ok"
-      ? [{ TipoDocumento: "Total", cantidad: biop.cantPendienteLiquidar.value }]
-      : []
-  const activosRelacionar = (relacionarRows.length ? relacionarRows : fallbackRelacionar).slice(
-    0,
-    3
-  )
-  const activosLiquidar = (liquidarRows.length ? liquidarRows : fallbackLiquidar).slice(0, 3)
-  const totalRelacionar = totalCantidadFromRows(activosRelacionar)
+  if (!resumen) return null
 
   return (
     <section className="grid grid-cols-1 gap-6 md:grid-cols-2">
-      <Card className="rounded-2xl border border-border border-t-4 border-t-(--color-brand-tertiary) shadow-sm">
-        <CardHeader className="border-b border-border/80 pb-3">
-          <CardTitle className="text-sm font-black tracking-[0.18em] text-muted-foreground uppercase">
-            Docs por relacionar
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-4">
-          {activosRelacionar.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Sin data disponible.</p>
-          ) : (
-            <div className="space-y-5">
-              {activosRelacionar.map((row) => {
-                const percent =
-                  totalRelacionar > 0
-                    ? Math.max(
-                        8,
-                        Math.round((row.cantidad / totalRelacionar) * 100)
-                      )
-                    : 0
-                return (
-                  <div key={row.TipoDocumento ?? "sin-tipo"} className="space-y-2">
-                    <div className="flex items-center justify-between text-xs font-bold uppercase tracking-tight">
-                      <span className="text-muted-foreground">
-                        {row.TipoDocumento ?? "Sin tipo"}
-                      </span>
-                      <span className="tabular-nums text-(--color-brand-primary)">
-                        {row.cantidad.toLocaleString("es-MX")}
-                      </span>
-                    </div>
-                    <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-                      <div
-                        className="h-full rounded-full bg-(--color-brand-tertiary)"
-                        style={{ width: `${percent}%` }}
-                      />
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card className="rounded-2xl border border-border border-t-4 border-t-(--color-brand-secondary) shadow-sm">
-        <CardHeader className="border-b border-border/80 pb-3">
-          <CardTitle className="text-sm font-black tracking-[0.18em] text-muted-foreground uppercase">
-            Docs por liquidar
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-4">
-          {activosLiquidar.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Sin data disponible.</p>
-          ) : (
-            <ul className="space-y-1">
-              {activosLiquidar.map((row) => (
-                <li
-                  key={row.TipoDocumento ?? "sin-tipo-liquidar"}
-                  className="flex items-center justify-between gap-3 border-b border-border/50 py-2.5 last:border-0"
-                >
-                  <div className="flex min-w-0 items-center gap-3">
-                    <div className="size-2 shrink-0 rounded-full bg-(--color-brand-secondary)" aria-hidden />
-                    <span className="truncate text-sm text-muted-foreground">
-                      {row.TipoDocumento ?? "Sin tipo"}
-                    </span>
-                  </div>
-                  <span className="shrink-0 text-sm font-bold tabular-nums">
-                    {row.cantidad.toLocaleString("es-MX")}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </CardContent>
-      </Card>
+      <RowTable
+        title="Docs por relacionar"
+        rows={resumen.porRelacionar}
+        accentClass="border-t-(--color-brand-tertiary)"
+      />
+      <RowTable
+        title="Docs por liquidar"
+        rows={resumen.porLiquidar}
+        accentClass="border-t-(--color-brand-secondary)"
+      />
     </section>
   )
 }

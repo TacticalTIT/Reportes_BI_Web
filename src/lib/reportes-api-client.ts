@@ -23,6 +23,16 @@ export const REPORTES_PROXY_CONTROL_PREVIO_SUBCONTRATOS_KPIS_PATH =
 export const REPORTES_PROXY_CONTROL_PREVIO_SUBCONTRATOS_TOP10_PATH =
   "/api/reportes/controlprevio/subcontratos/top10"
 
+/** Control previo — documentos no relacionados (proxy → `api/controlprevio/documentonorelacionados/*`). */
+export const REPORTES_PROXY_CONTROL_PREVIO_DOC_NO_REL_KPIS_PATH =
+  "/api/reportes/controlprevio/documentonorelacionados/kpis"
+export const REPORTES_PROXY_CONTROL_PREVIO_DOC_NO_REL_TABLA_PATH =
+  "/api/reportes/controlprevio/documentonorelacionados/tabla"
+export const REPORTES_PROXY_CONTROL_PREVIO_DOC_NO_REL_TABLA_POR_LIQUIDAR_PATH =
+  "/api/reportes/controlprevio/documentonorelacionados/tablaporliquidar"
+export const REPORTES_PROXY_CONTROL_PREVIO_DOC_NO_REL_TABLA_POR_RELACIONAR_PATH =
+  "/api/reportes/controlprevio/documentonorelacionados/tablaporrelacionar"
+
 /** @deprecated Alias del proxy de tabla; evita errores de build si quedó un import antiguo en caché. */
 export const REPORTES_PROXY_ROPRESUPUESTO_BIOP_SUBCONTRATO_RESUMEN_PATH =
   REPORTES_PROXY_CONTROL_PREVIO_SUBCONTRATOS_TABLA_PATH
