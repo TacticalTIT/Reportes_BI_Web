@@ -1,12 +1,5 @@
 import { buildReportFiltersQueryString, type ReportTablaFilters } from "@/lib/report-filters"
 
-type ApiErrorBody = {
-  success: false
-  message: string
-  error?: string
-  code?: string
-}
-
 /** Máximo `pageSize` para métricas BIOP tabulares (spec backend). */
 export const BIOP_TABLE_MAX_PAGE_SIZE = 200
 
@@ -32,6 +25,14 @@ export const REPORTES_PROXY_CONTROL_PREVIO_DOC_NO_REL_TABLA_POR_LIQUIDAR_PATH =
   "/api/reportes/controlprevio/documentonorelacionados/tablaporliquidar"
 export const REPORTES_PROXY_CONTROL_PREVIO_DOC_NO_REL_TABLA_POR_RELACIONAR_PATH =
   "/api/reportes/controlprevio/documentonorelacionados/tablaporrelacionar"
+
+/** Control previo — ingresos no relacionados (proxy → `api/controlprevio/ingresosnorelacionados/*`). */
+export const REPORTES_PROXY_CONTROL_PREVIO_ING_NO_REL_TABLA_PATH =
+  "/api/reportes/controlprevio/ingresosnorelacionados/tabla"
+export const REPORTES_PROXY_CONTROL_PREVIO_ING_NO_REL_KPIS_PATH =
+  "/api/reportes/controlprevio/ingresosnorelacionados/kpis"
+export const REPORTES_PROXY_CONTROL_PREVIO_ING_NO_REL_TOP10_PROVEEDORES_PATH =
+  "/api/reportes/controlprevio/ingresosnorelacionados/top10proveedores"
 
 /** @deprecated Alias del proxy de tabla; evita errores de build si quedó un import antiguo en caché. */
 export const REPORTES_PROXY_ROPRESUPUESTO_BIOP_SUBCONTRATO_RESUMEN_PATH =
@@ -101,29 +102,43 @@ export async function fetchReportesJson(path: string): Promise<unknown> {
   }
 
   if (!res.ok) {
-    if (
-      typeof body === "object" &&
-      body !== null &&
-      "message" in body &&
-      typeof (body as ApiErrorBody).message === "string"
-    ) {
-      throw new Error((body as ApiErrorBody).message)
+    if (typeof body === "object" && body !== null) {
+      const o = body as Record<string, unknown>
+      const msg =
+        typeof o.message === "string"
+          ? o.message
+          : typeof o.Message === "string"
+            ? o.Message
+            : null
+      if (msg) throw new Error(msg)
     }
     throw new Error(`Error HTTP ${res.status}`)
   }
 
-  if (
-    typeof body !== "object" ||
-    body === null ||
-    !("success" in body) ||
-    typeof (body as { success: unknown }).success !== "boolean"
-  ) {
+  if (typeof body !== "object" || body === null) {
     throw new Error("Respuesta del API con formato inesperado.")
   }
 
-  if (!(body as { success: boolean }).success) {
-    const err = body as ApiErrorBody
-    throw new Error(err.message || "El API devolvio un error.")
+  const envelope = body as Record<string, unknown>
+  const okFlag =
+    typeof envelope.success === "boolean"
+      ? envelope.success
+      : typeof envelope.Success === "boolean"
+        ? envelope.Success
+        : undefined
+
+  if (typeof okFlag !== "boolean") {
+    throw new Error("Respuesta del API con formato inesperado.")
+  }
+
+  if (!okFlag) {
+    const msg =
+      typeof envelope.message === "string"
+        ? envelope.message
+        : typeof envelope.Message === "string"
+          ? envelope.Message
+          : "El API devolvio un error."
+    throw new Error(msg)
   }
 
   return body
