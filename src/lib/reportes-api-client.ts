@@ -34,6 +34,18 @@ export const REPORTES_PROXY_CONTROL_PREVIO_ING_NO_REL_KPIS_PATH =
 export const REPORTES_PROXY_CONTROL_PREVIO_ING_NO_REL_TOP10_PROVEEDORES_PATH =
   "/api/reportes/controlprevio/ingresosnorelacionados/top10proveedores"
 
+/** Control previo — estado OC/OS (proxy → `api/controlprevio/estadoordenes/*`). */
+export const REPORTES_PROXY_CONTROL_PREVIO_ESTADO_ORDENES_TABLA_PATH =
+  "/api/reportes/controlprevio/estadoordenes/tabla"
+export const REPORTES_PROXY_CONTROL_PREVIO_ESTADO_ORDENES_TABLA_A_PATH =
+  "/api/reportes/controlprevio/estadoordenes/tablaA"
+export const REPORTES_PROXY_CONTROL_PREVIO_ESTADO_ORDENES_TABLA_B_PATH =
+  "/api/reportes/controlprevio/estadoordenes/tablaB"
+export const REPORTES_PROXY_CONTROL_PREVIO_ESTADO_ORDENES_FACTURADO_PENDIENTE_PATH =
+  "/api/reportes/controlprevio/estadoordenes/facturadopormontopendiente"
+export const REPORTES_PROXY_CONTROL_PREVIO_ESTADO_ORDENES_KPIS_PATH =
+  "/api/reportes/controlprevio/estadoordenes/kpis"
+
 /** @deprecated Alias del proxy de tabla; evita errores de build si quedó un import antiguo en caché. */
 export const REPORTES_PROXY_ROPRESUPUESTO_BIOP_SUBCONTRATO_RESUMEN_PATH =
   REPORTES_PROXY_CONTROL_PREVIO_SUBCONTRATOS_TABLA_PATH

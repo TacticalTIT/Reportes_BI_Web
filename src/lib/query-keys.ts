@@ -36,4 +36,10 @@ export const reportKeys = {
 
   ingresosNoRelacionadosTop10: () =>
     [...reportKeys.all, "ingresos-no-relacionados-top10"] as const,
+
+  estadoOrdenesOverview: () =>
+    [...reportKeys.all, "estado-ordenes-overview"] as const,
+
+  estadoOrdenesTabla: (page: number) =>
+    [...reportKeys.all, "estado-ordenes-tabla", page] as const,
 }

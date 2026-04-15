@@ -1,5 +1,5 @@
-import { ReportPlaceholder } from "../../_components/report-placeholder"
+import { EstadoOcOsScreen } from "@/features/estado-oc-os/components/estado-oc-os-screen"
 
 export default function EstadoOcOsPage() {
-  return <ReportPlaceholder title="Estado OC/OS" />
+  return <EstadoOcOsScreen />
 }
