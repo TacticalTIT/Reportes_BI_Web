@@ -1,5 +1,5 @@
-import { ReportPlaceholder } from "../../_components/report-placeholder"
+import { InformeGeneralScreen } from "@/features/informe-general/components/informe-general-screen"
 
 export default function InformeGeneralPage() {
-  return <ReportPlaceholder title="Informe General" />
+  return <InformeGeneralScreen />
 }

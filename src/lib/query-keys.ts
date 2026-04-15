@@ -51,4 +51,19 @@ export const reportKeys = {
 
   stockAlmacenTopRecursos: () =>
     [...reportKeys.all, "stock-almacen-top-recursos"] as const,
+
+  informeGeneralEstado: () =>
+    [...reportKeys.all, "control-previo-informe-general-estado"] as const,
+
+  informeGeneralSubcontratos: () =>
+    [...reportKeys.all, "control-previo-informe-general-subcontratos"] as const,
+
+  informeGeneralDocumentos: () =>
+    [...reportKeys.all, "control-previo-informe-general-documentos"] as const,
+
+  informeGeneralIngresos: () =>
+    [...reportKeys.all, "control-previo-informe-general-ingresos"] as const,
+
+  informeGeneralStock: () =>
+    [...reportKeys.all, "control-previo-informe-general-stock"] as const,
 }
