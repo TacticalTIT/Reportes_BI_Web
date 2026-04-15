@@ -46,6 +46,14 @@ export const REPORTES_PROXY_CONTROL_PREVIO_ESTADO_ORDENES_FACTURADO_PENDIENTE_PA
 export const REPORTES_PROXY_CONTROL_PREVIO_ESTADO_ORDENES_KPIS_PATH =
   "/api/reportes/controlprevio/estadoordenes/kpis"
 
+/** Control previo — stock almacen (proxy → `api/controlprevio/stockalmacen/*`). */
+export const REPORTES_PROXY_CONTROL_PREVIO_STOCK_ALMACEN_TABLA_PATH =
+  "/api/reportes/controlprevio/stockalmacen/tabla"
+export const REPORTES_PROXY_CONTROL_PREVIO_STOCK_ALMACEN_INVENTARIO_POR_CATEGORIA_PATH =
+  "/api/reportes/controlprevio/stockalmacen/inventarioporcategoria"
+export const REPORTES_PROXY_CONTROL_PREVIO_STOCK_ALMACEN_TOP_RECURSOS_PATH =
+  "/api/reportes/controlprevio/stockalmacen/toprecursos"
+
 /** @deprecated Alias del proxy de tabla; evita errores de build si quedó un import antiguo en caché. */
 export const REPORTES_PROXY_ROPRESUPUESTO_BIOP_SUBCONTRATO_RESUMEN_PATH =
   REPORTES_PROXY_CONTROL_PREVIO_SUBCONTRATOS_TABLA_PATH

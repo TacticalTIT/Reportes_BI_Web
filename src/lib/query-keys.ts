@@ -42,4 +42,13 @@ export const reportKeys = {
 
   estadoOrdenesTabla: (page: number) =>
     [...reportKeys.all, "estado-ordenes-tabla", page] as const,
+
+  stockAlmacenTabla: (page: number) =>
+    [...reportKeys.all, "stock-almacen-tabla", page] as const,
+
+  stockAlmacenInventarioPorCategoria: () =>
+    [...reportKeys.all, "stock-almacen-inventario-por-categoria"] as const,
+
+  stockAlmacenTopRecursos: () =>
+    [...reportKeys.all, "stock-almacen-top-recursos"] as const,
 }

@@ -1,5 +1,5 @@
-import { ReportPlaceholder } from "../../_components/report-placeholder"
+import { StockAlmacenScreen } from "@/features/stock-almacen/components/stock-almacen-screen"
 
 export default function StockAlmacenPage() {
-  return <ReportPlaceholder title="Stock Almacen" />
+  return <StockAlmacenScreen />
 }
