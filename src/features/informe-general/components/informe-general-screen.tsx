@@ -13,6 +13,8 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import {
   ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
@@ -185,7 +187,7 @@ export function InformeGeneralScreen() {
   const trendConfig: ChartConfig = {
     pendienteParcial: { label: "Parcial", color: "var(--color-brand-primary)" },
     pendienteSinFacturar: { label: "Sin facturar", color: "var(--color-brand-secondary)" },
-    pendienteTotal: { label: "Total", color: "var(--color-brand-tertiary)" },
+    pendienteTotal: { label: "Total facturado", color: "var(--color-brand-tertiary)" },
   }
 
   const categoriasConfig: ChartConfig = useMemo(() => {
@@ -338,6 +340,10 @@ export function InformeGeneralScreen() {
                           stroke="var(--color-pendienteTotal)"
                           fill="var(--color-pendienteTotal)"
                           fillOpacity={0.8}
+                        />
+                        <ChartLegend
+                          verticalAlign="bottom"
+                          content={<ChartLegendContent />}
                         />
                       </AreaChart>
                     </ChartContainer>
